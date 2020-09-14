@@ -1,59 +1,52 @@
-import { Apollo } from 'apollo-angular';
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs';
-import gql from 'graphql-tag';
-import { LoadingController } from '@ionic/angular';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Storage } from "@ionic/storage";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  private authUserSub = new Subscription;
-  private isLoading : Boolean; 
-  private LOGIN_QUERY = gql`
-    query LoginQuery ($username: String,$password:String){
-      login(username:$username,password:$password){
-        token
-        userId
-        expires
-      }
-  }`;
-
-  constructor(private apollo: Apollo,
-    public loadingController: LoadingController,
-    ) { }
   
-  async toggleAlert() {
-    await this.loadingController.create({
-      cssClass: 'my-custom-class',
-      animated: true,
-      message: 'Iniciando sesión',
-      translucent: true,
-      backdropDismiss: false
-    }).
-    then(async (alert)=>{
-      await alert.present().then(() => {
-        if (!this.isLoading) {
-          alert.dismiss();
-        }
-      });
-    })
+  private _isAuthenticated = new BehaviorSubject(false);
+  private userid;
+
+  constructor(
+    private storage: Storage
+    ) { }
+
+  login(loginData: any){
+    this.saveUserData(loginData.userId,loginData.token);
   }
 
-  login(username:string,password:string): void{
-    this.authUserSub = this.apollo.watchQuery<any>({
-      query: this.LOGIN_QUERY,
-      variables: { username, password }
-    })
-    .valueChanges
-    .subscribe(({ data, loading }) => {
-      this.isLoading = loading;
-      this.toggleAlert();
-    })
+  saveUserData(id: string, token: string) {
+    this.storage.set("GC_USER_ID", id);
+    this.storage.set("GC_AUTH_TOKEN", token);
+    localStorage.setItem("GC_AUTH_TOKEN",token);
+    this.setUserId(id);
   }
 
-  logout(): void{ }
+  setUserId(id: string) {
+    this.userid = id;
+    this._isAuthenticated.next(true);
+  }
 
-  isAuthenticated(): boolean{ return false; }
+  logout() {
+    this.storage.remove("GC_USER_ID");
+    this.storage.remove("GC_AUTH_TOKEN");
+    localStorage.removeItem("GC_AUTH_TOKEN");
+    this.userid = null;
+    this._isAuthenticated.next(false);
+  }
+
+  async autoLogin() {
+    this.storage.get("GC_USER_ID").then( id =>{
+      if (id) {
+        this.setUserId(id);
+      }
+    });
+  }
+
+  isAuthenticated(): Observable<boolean>  {
+    return this._isAuthenticated.asObservable();
+  }
 }

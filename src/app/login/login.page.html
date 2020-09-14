@@ -1,0 +1,21 @@
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Iniciar Sesión</ion-card-title>
+      <ion-card-subtitle>Bienvenido a NoteApp</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="ion-padding-vertical">
+        <ion-input required [(ngModel)]="username" name="username" type="text" placeholder="Nombre de Usuario">
+        </ion-input>
+        <ion-input required [(ngModel)]="password" name="password" type="password" placeholder="Contraseña"></ion-input>
+      </div>
+
+      <div class="ion-padding-vertical">
+        <ion-button (click)="login()" expand="block" color="primary" ion shape="round">
+          Iniciar Sesión
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
