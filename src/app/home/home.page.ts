@@ -1,3 +1,5 @@
+import { User } from './../models/user';
+import { AlertController } from '@ionic/angular';
 import { gql, Apollo } from 'apollo-angular';
 import { AuthService } from './../services/auth.service';
 import { Component } from '@angular/core';
@@ -16,34 +18,49 @@ export class HomePage {
       username
     }
   }`;
+  private user: User;
 
   constructor(
-    public authservice: AuthService,
+    public authService: AuthService,
     public router: Router,
-    public apollo: Apollo
-  ) {}
+    public apollo: Apollo,
+    public alertController: AlertController
+  ) { }
 
-  ngOnInit(){
+  ngOnInit() {
+    this.authService.autoLogin().then(( done )=>{
+      if(!done) this.loginAlert();
+    })
+    this.loadUser();
+  }
+
+  loadUser(){
     this.apollo.watchQuery({
-      query: this.USERQUERY,
-      notifyOnNetworkStatusChange: true,
+      query:this.USERQUERY,
+      notifyOnNetworkStatusChange:true,
+      errorPolicy: "ignore",
+    }).valueChanges.subscribe(response=>{
+      this.user = new User(response.data['user']);
     })
   }
 
-
-
   //Login specific Methods
-  logout(){
-    this.authservice.logout();
-    this.router.navigateByUrl("login", {replaceUrl: true})
+  logout() {
+    this.authService.logout();
+    this.router.navigateByUrl("login", { replaceUrl: true })
   }
-  ionViewDidEnter(){
-    this.authservice.isAuthenticated().toPromise().then( authenticated=>{
-      console.log(authenticated)
-      if(!authenticated){
-        this.router.navigateByUrl("login", {replaceUrl: true})
-      }
-    });
+  loginAlert() {
+    this.alertController.create({
+      header: "No has iniciado sesión",
+      message: "Debes iniciar sesión",
+      backdropDismiss:false,
+      buttons: [
+        {
+          text: "Iniciar Sesión", handler: () => {
+            this.router.navigateByUrl("login", { replaceUrl: true });
+          }
+        }]
+    }).then(alert => { alert.present() })
   }
 
 }

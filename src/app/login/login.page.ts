@@ -33,14 +33,11 @@ export class LoginPage implements OnInit {
     public alertController: AlertController,
     public apollo: Apollo,
     public router: Router
-  ) { }
+  ) {  }
 
   ngOnInit() {
-    this.authService.autoLogin();
-    this.authService.isAuthenticated().subscribe( authenticated =>{
-      if(authenticated){
-        this.loadHomePage();
-      }
+    this.authService.autoLogin().then(( done )=>{
+      if(done) this.loadHomePage();
     })
   }
 
@@ -54,8 +51,8 @@ export class LoginPage implements OnInit {
       variables: { username: this.username,password: this.password }
     }).valueChanges.subscribe( ({ data, loading })=>{
         this.isLoading.next(loading);
-        if(data.login != null){
-          this.authService.login(data.login);
+        if(data['login'] != null){
+          this.authService.login(data['login']);
           this.loadHomePage();
         }else{
           this.errorAlert();

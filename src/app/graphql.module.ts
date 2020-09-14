@@ -6,9 +6,8 @@ import { setContext } from '@apollo/client/link/context';
 import { Storage } from '@ionic/storage';
 
 const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
+  localStorage.removeItem("GC_AUTH_TOKEN")
   const token = localStorage.getItem("GC_AUTH_TOKEN")
-  // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,

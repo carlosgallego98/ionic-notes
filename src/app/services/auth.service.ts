@@ -7,12 +7,11 @@ import { Storage } from "@ionic/storage";
 })
 export class AuthService {
   
-  private _isAuthenticated = new BehaviorSubject(false);
   private userid;
 
   constructor(
     private storage: Storage
-    ) { }
+    ) {  }
 
   login(loginData: any){
     this.saveUserData(loginData.userId,loginData.token);
@@ -27,7 +26,6 @@ export class AuthService {
 
   setUserId(id: string) {
     this.userid = id;
-    this._isAuthenticated.next(true);
   }
 
   logout() {
@@ -35,18 +33,15 @@ export class AuthService {
     this.storage.remove("GC_AUTH_TOKEN");
     localStorage.removeItem("GC_AUTH_TOKEN");
     this.userid = null;
-    this._isAuthenticated.next(false);
   }
 
   async autoLogin() {
-    this.storage.get("GC_USER_ID").then( id =>{
+    return this.storage.get("GC_AUTH_TOKEN").then( id =>{
       if (id) {
         this.setUserId(id);
+        return true;
       }
+      return false;
     });
-  }
-
-  isAuthenticated(): Observable<boolean>  {
-    return this._isAuthenticated.asObservable();
   }
 }

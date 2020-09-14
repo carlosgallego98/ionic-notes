@@ -1,26 +1,14 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Notes
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Notes</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
+<ion-content *ngIf="user" >
   <div id="container">
         <h2 >Usuario autenticado</h2>
-        <p>Bienvenido <b>Nombre</b></p>
+        <p>Bienvenido de vuelta <b>{{ user.username }}</b></p>
         <div class="ion-padding-vertical">
           <ion-button (click)="logout()" color="secondary" shape="round">
             Cerrar Sesión
           </ion-button>
-        </div>
-
+          <ion-button color="warning" shape="round">
+            Notas
+          </ion-button>
+        </div>  
   </div>
 </ion-content>
