@@ -1,8 +1,11 @@
+import { HelpersService } from './../helpers.service';
+import { Note } from './../models/note';
+import { NoteService } from './../services/note.service';
 import { User } from './../models/user';
 import { AlertController } from '@ionic/angular';
 import { gql, Apollo } from 'apollo-angular';
 import { AuthService } from './../services/auth.service';
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,6 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
 
   USERQUERY = gql`{
@@ -19,19 +23,17 @@ export class HomePage {
     }
   }`;
   private user: User;
-
+  private userNotes: Note[];
+  
   constructor(
     public authService: AuthService,
+    public noteService: NoteService,
+    public helpersService: HelpersService,
     public router: Router,
     public apollo: Apollo,
     public alertController: AlertController
-  ) { }
-
-  ngOnInit() {
-    this.authService.autoLogin().then(( done )=>{
-      if(!done) this.loginAlert();
-    })
-    this.loadUser();
+  ){ 
+    this.userNotes = []
   }
 
   loadUser(){
@@ -41,6 +43,17 @@ export class HomePage {
       errorPolicy: "ignore",
     }).valueChanges.subscribe(response=>{
       this.user = new User(response.data['user']);
+    })
+  }
+  loadUserNotes(){
+    this.userNotes = this.noteService.loadUserNotes();
+  }
+
+  ionViewDidEnter(){
+    this.authService.autoLogin().then(( done )=>{
+      if(!done) this.loginAlert();
+      this.loadUser();
+      this.loadUserNotes();
     })
   }
 

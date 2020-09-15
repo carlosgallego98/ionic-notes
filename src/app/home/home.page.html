@@ -1,14 +1,27 @@
-<ion-content *ngIf="user" >
-  <div id="container">
-        <h2 >Usuario autenticado</h2>
-        <p>Bienvenido de vuelta <b>{{ user.username }}</b></p>
-        <div class="ion-padding-vertical">
-          <ion-button (click)="logout()" color="secondary" shape="round">
-            Cerrar Sesión
-          </ion-button>
-          <ion-button color="warning" shape="round">
-            Notas
-          </ion-button>
-        </div>  
-  </div>
+<ion-content *ngIf="user">
+
+  <ion-toolbar>
+    <ion-buttons slot="secondary">
+      <ion-button>
+        <ion-icon slot="icon-only" name="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>NotApp</ion-title>
+    <ion-button (click)="logout()" fill="clear" slot="end">
+      <ion-icon name="log-out"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+
+  <ion-list-header>
+    <ion-label>Tus Notas</ion-label>
+  </ion-list-header>
+
+  <app-note-list [noteList]=userNotes ></app-note-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="ion-padding">
+    <ion-fab-button>
+      <ion-icon name="add-circle"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

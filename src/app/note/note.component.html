@@ -1,0 +1,13 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title color="primary">{{note.title}}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <span>{{note.body}}</span>
+    <p>
+      <ion-text size="small" color="dark">
+        {{ helpersService.formatDate(note.createdAt) }}
+      </ion-text>
+    </p>
+  </ion-card-content>
+</ion-card>

@@ -1,0 +1,7 @@
+    <ion-grid fixed class="ion-no-padding">
+        <ion-row >           
+                <ion-col  [size]=layout size-sm *ngFor="let note of noteList" >
+                    <app-note [note]=note ></app-note>
+                </ion-col>
+        </ion-row>
+    </ion-grid>
